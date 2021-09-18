@@ -1,25 +1,34 @@
-import logo from './logo.svg';
-import './App.css';
+import React, {useState, useRef} from 'react';
+import InputRoomName from './components/InputRoomName';
+import InputUserName from './components/InputUserName';
+import Video from './components/Video';
+import VideoRemote from './components/VideoRemote'
+import WebRtc from './components/WebRtc';
 
-function App() {
+const App = () => {
+  // TODO WebRTC準備（移送予定）
+  const config = {
+    iceServers: [{ urls: "stun:stun4.l.google.com:19302" }]
+  }
+
+  const rtcPeerConnection = new RTCPeerConnection(config);
+
+  const[roomName, setRoomName] = useState('');
+  const[userName, setUserName] = useState('');
+
+  // WebRtc設定を行うインスタンスを生成
+  const remoteVideoRef = useRef(null);
+  let webRtc = new WebRtc(remoteVideoRef);
+  webRtc.setLocalMediaStream();
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <InputRoomName webRtc={webRtc} roomName={roomName} setRoomName={setRoomName} />
+      <InputUserName webRtc={webRtc} roomName={roomName} userName={userName} setUserName={setUserName} />
+      <Video rtcPeerConnection={rtcPeerConnection} />
+      <VideoRemote webRtc={webRtc} />
+    </>
   );
-}
+};
 
 export default App;
