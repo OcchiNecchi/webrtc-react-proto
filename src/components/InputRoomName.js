@@ -44,10 +44,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function InputRoomName({webRtc, roomName, setRoomName}) {
+export default function InputRoomName({peerManage, roomName, setRoomName}) {
   const classes = useStyles();
-  // 日本語を入力時、変換のためのEnterで反応しないようにするための状態管理用変数
-  const [isComposed, setIsComposed] = useState(false);
 
   if(roomName !== '') return <></>;
 
@@ -75,7 +73,7 @@ export default function InputRoomName({webRtc, roomName, setRoomName}) {
               if(e.target.value === '') return;
               if(e.key === 'Enter') {
                 setRoomName(e.target.value);
-                webRtc.setRoomName(e.target.value);
+                peerManage.setRoomName(e.target.value);
               }
             }}
           />
@@ -87,7 +85,7 @@ export default function InputRoomName({webRtc, roomName, setRoomName}) {
             className={classes.submit}
             onClick={ e => {
             　setRoomName(e.target.value)
-              webRtc.setRoomName(e.target.value);
+              peerManage.setRoomName(e.target.value);
             }}
           >
             Sign In

@@ -20,65 +20,41 @@ export default class SignalingClient {
     // Get a reference to the database service
     this.database = firebase.database();
 
-    // ビデオ通話用の部屋名
-    this.roomName = '';
-    // 自分のユーザー名
-    this.myUserName = '';
-    // 相手のユーザー名
-    this.remoteUserName = '';
-
-  }
-
-  // TODO ここのset系はリファクタ対象
-  setRoomName(roomName) {
-    this.roomName = roomName;
-  }
-
-  setLocalNames(roomName, myUserName) {
-    this.roomName = roomName;
-    this.myUserName = myUserName;
-  }
-
-  setRemoteUser(remoteUserName) {
-    this.remoteUserName = remoteUserName;
-  }
-
-  // 部屋名+ユーザー名のパスを返す
-  get targetUserSchema() {
-    return this.database.ref(this.roomName);
   }
 
   // offerをRealtimeDatabaseに送る。SDPはjson形式でくる
-  async signalOffer(sdp, roomName, remoteUserName) {
+  async signalOffer(sdp, roomName, myUserName, remoteUserName) {
     this.remoteUserName = remoteUserName;
-    await this.database.ref(roomName + '/' + remoteUserName + '/offer').set({
+    await this.database.ref(roomName + '/' + remoteUserName).set({
+      signal: 'offer',
       sdp,
-      from: this.myUserName
+      from: myUserName
     });
   }
 
   // answerをRealtimeDatabaseに送る
-  async signalAnswer(sdp, remoteUserName) {
-    await this.database.ref(this.roomName + '/' + remoteUserName + '/answer').set({
+  async signalAnswer(sdp, roomName, myUserName, remoteUserName) {
+    await this.database.ref(roomName + '/' + remoteUserName).set({
+      signal: 'answer',
       sdp,
-      from: this.myUserName
+      from: myUserName
     });
   }
   
   // candidateをRealtimeDatabaseに送る
-  async signalCandidate(candidate) {
-    await this.database.ref(this.roomName + '/' + this.remoteUserName + '/icecandidate').set({
+  async signalCandidate(candidate, roomName, myUserName, remoteUserName) {
+    await this.database.ref(roomName + '/' + remoteUserName).set({
+      signal: 'icecandidate',
       candidate,
-      from: this.myUserName
+      from: myUserName
     });
   }
 
   // roomuserに自分のユーザー名を入れる
-  // pushだと一意のIDが入るため、読み取り時は注意すること
-  async registerUser(roomName, userName) {
+  async registerUser(roomName, myUserName) {
     // TODO 流石にuserNameの中にuserNameはあれなので入れた日にちとかにしとく
-    await this.database.ref(roomName + '/roomuser/' + userName).set({
-      userName
+    await this.database.ref(roomName + '/roomuser/' + myUserName).set({
+      myUserName
     });
   }
 }

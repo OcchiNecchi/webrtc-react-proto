@@ -44,17 +44,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function InputUserName({webRtc, roomName, userName, setUserName}) {
+export default function InputUserName({peerManage, roomName, userName, setUserName}) {
   const classes = useStyles();
   const [name, setName] = useState('');
 
-  // 日本語を入力時、変換のためのEnterで反応しないようにするための状態管理用変数
-  const [isComposed, setIsComposed] = useState(false);
-
   // ユーザー名入力後にコールバック関数が実行される
   const startListenSignal = useCallback(async (e) => {
-    //await webRtc.offer(name, roomName);
-    await webRtc.listenSignal(name, roomName);
+    await peerManage.startSignal(roomName, name);
     // eには今回Enterが入っているが下記によりformが勝手に送信されないようにしている
     e.preventDefault();
   }, [name])

@@ -2,15 +2,17 @@ import React, {useState, useRef} from 'react';
 import InputRoomName from './components/InputRoomName';
 import InputUserName from './components/InputUserName';
 import Video from './components/Video';
-import VideoRemote from './components/VideoRemote'
+import VideoRemote from './components/VideoRemote';
+import VideoRemoteTwo from './components/VideoRemoteTwo';
+import VideoRemoteThree from './components/VideoRemoteThree';
 import WebRtc from './components/WebRtc';
+import PeerManage from './components/PeerManage';
 
 const App = () => {
-  // TODO WebRTC準備（移送予定）
+  // TODO WebRTC準備（移送予定）あくまでローカルでしか使っていないrtcPeerConnection
   const config = {
     iceServers: [{ urls: "stun:stun4.l.google.com:19302" }]
   }
-
   const rtcPeerConnection = new RTCPeerConnection(config);
 
   const[roomName, setRoomName] = useState('');
@@ -18,15 +20,19 @@ const App = () => {
 
   // WebRtc設定を行うインスタンスを生成
   const remoteVideoRef = useRef(null);
-  let webRtc = new WebRtc(remoteVideoRef);
-  webRtc.setLocalMediaStream();
+  const remoteVideoRefTwo = useRef(null);
+  const remoteVideoRefThree = useRef(null);
+
+  let peerManage = new PeerManage(remoteVideoRef, remoteVideoRefTwo, remoteVideoRefThree);
 
   return (
     <>
-      <InputRoomName webRtc={webRtc} roomName={roomName} setRoomName={setRoomName} />
-      <InputUserName webRtc={webRtc} roomName={roomName} userName={userName} setUserName={setUserName} />
+      <InputRoomName peerManage={peerManage} roomName={roomName} setRoomName={setRoomName} />
+      <InputUserName peerManage={peerManage} roomName={roomName} userName={userName} setUserName={setUserName} />
       <Video rtcPeerConnection={rtcPeerConnection} />
-      <VideoRemote webRtc={webRtc} />
+      <VideoRemote peerManage={peerManage} />
+      <VideoRemoteTwo peerManage={peerManage} />
+      <VideoRemoteThree peerManage={peerManage} />
     </>
   );
 };
