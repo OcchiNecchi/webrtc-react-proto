@@ -5,7 +5,6 @@ import Video from './components/Video';
 import VideoRemote from './components/VideoRemote';
 import VideoRemoteTwo from './components/VideoRemoteTwo';
 import VideoRemoteThree from './components/VideoRemoteThree';
-import WebRtc from './components/WebRtc';
 import PeerManage from './components/PeerManage';
 
 const App = () => {
