@@ -2,7 +2,7 @@ import SignalingClient from "./SignalingClient";
 import WebRtc from './WebRtc';
 
 export default class PeerManage {
-  constructor(remoteVideoRef, remoteVideoRefTwo, remoteVideoRefThree) {
+  constructor(remoteVideoRef, remoteVideoRefTwo, remoteVideoRefThree, myVideoStream) {
     this.roomName = '';
     this.myUserName = '';
 
@@ -23,6 +23,8 @@ export default class PeerManage {
 
     // シグナリングサーバーとやりとりするために必要
     this.signalingClient = new SignalingClient();
+
+    this.myVideoStream = myVideoStream;
   }
 
   setRoomName(roomName) {
@@ -31,7 +33,7 @@ export default class PeerManage {
 
   // 自分のmediaStreamを設定する
   async setPeerMediaStream(peerNum) {
-    await this.peerArray[peerNum].setLocalMediaStream();
+    await this.peerArray[peerNum].setLocalMediaStream(this.myVideoStream);
   }
 
   // シグナリングを開始する

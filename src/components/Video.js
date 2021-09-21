@@ -2,11 +2,11 @@ import React, {useEffect, useRef, useCallback, useReducer} from 'react';
 import "@tensorflow/tfjs";
 import * as bodyPix from "@tensorflow-models/body-pix";
 
-const Video = ({rtcPeerConnection}) => {
+const Video = ({setMyVideoStream}) => {
   // TODO リファクタ対象
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
-  let contineuAnimation = false;
+  let contineuAnimation = true;
   let animationId = null;
   let bodyPixMaks = null;
   let canvasStream = null;
@@ -16,29 +16,21 @@ const Video = ({rtcPeerConnection}) => {
   const segmeteUpdateTime = 30; // ms
 
   // 追加コード
-  function startCanvasVideo() {
-    writeCanvasString('initalizing BodyPix');
-    contineuAnimation = true;
+  const startCanvasVideo = () => {
     animationId = window.requestAnimationFrame(updateCanvas);
     canvasStream = canvasRef.current.captureStream();
+    setMyVideoStream(canvasStream);
     updateSegment();
   }
 
-  function writeCanvasString(str) {
-    const ctx = canvasRef.current.getContext('2d');
-    ctx.font = "64px serif";
-    ctx.fillText(str, 5, 100);
-    console.log(str);
-  }
-
-  function updateCanvas() {
+  const updateCanvas = () => {
     drawCanvas(videoRef.current);
     if (contineuAnimation) {
       animationId = window.requestAnimationFrame(updateCanvas);
     }
   }
 
-  function drawCanvas(srcElement) {
+  const drawCanvas = (srcElement) => {
     const opacity = 1.0;
     const flipHorizontal = false;
     // const maskBlurAmount = 0;
@@ -50,8 +42,7 @@ const Video = ({rtcPeerConnection}) => {
     );
   }
 
-  function updateSegment() {
-
+  const updateSegment = () => {
     const option = {
       flipHorizontal: false,
       internalResolution: 'medium',
@@ -81,9 +72,6 @@ const Video = ({rtcPeerConnection}) => {
     // TODO 下記から既存コード
     //if(currentVideoRef === null) return;
     let mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
-    // Trackを追加する
-    rtcPeerConnection.addTrack(mediaStream.getAudioTracks()[0], mediaStream);
-    rtcPeerConnection.addTrack(mediaStream.getVideoTracks()[0], mediaStream);
 
     // MDNから audioとカメラの使用許可をブラウザに与える
     if(videoRef.current) {
@@ -101,7 +89,6 @@ const Video = ({rtcPeerConnection}) => {
         startCanvasVideo();
       }
     }
-    
   }, [videoRef]);
 
   return(
