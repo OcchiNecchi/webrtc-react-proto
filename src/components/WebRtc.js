@@ -27,7 +27,7 @@ export default class WebRtc {
   }
 
   // 自分のmediaStreamとTrackを設定する
-  async setLocalMediaStream() {
+  async setLocalMediaStream(myVideoStream) {
     // mediaStreamを取得する
     const constraints = { audio: true, video: true };
     this.mediaStream = await navigator.mediaDevices.getUserMedia(constraints);
@@ -37,7 +37,11 @@ export default class WebRtc {
     this.rtcPeerConnection.addTrack(this.mediaStream.getAudioTracks()[0], this.mediaStream);
 
     // videoTrackを設定する
-    this.rtcPeerConnection.addTrack(this.mediaStream.getVideoTracks()[0], this.mediaStream);
+    if(myVideoStream) {
+      this.rtcPeerConnection.addTrack(myVideoStream.getVideoTracks()[0], this.mediaStream);
+    } else {
+      this.rtcPeerConnection.addTrack(this.mediaStream.getVideoTracks()[0], this.mediaStream);
+    }
   }
 
   setRoomName(roomName) {
