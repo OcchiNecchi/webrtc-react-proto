@@ -16,7 +16,10 @@ const Video = ({setMyVideoStream}) => {
   const segmeteUpdateTime = 30; // ms
 
   // 追加コード
-  const startCanvasVideo = () => {
+  const startCanvasVideo = async () => {
+    // タグに直接autoplayだとvideoが止まってしまうため
+    await videoRef.current.play().catch(err => console.error('local play ERROR:', err));
+
     animationId = window.requestAnimationFrame(updateCanvas);
     canvasStream = canvasRef.current.captureStream();
     setMyVideoStream(canvasStream);
@@ -33,8 +36,7 @@ const Video = ({setMyVideoStream}) => {
   const drawCanvas = (srcElement) => {
     const opacity = 1.0;
     const flipHorizontal = false;
-    // const maskBlurAmount = 0;
-    const maskBlurAmount = 0; // マスクの周囲にボケ効果を入れる
+    const maskBlurAmount = 2; // マスクの周囲にボケ効果を入れる
 
     bodyPix.drawMask(
       canvasRef.current, srcElement, bodyPixMaks, opacity, maskBlurAmount,
@@ -68,16 +70,13 @@ const Video = ({setMyVideoStream}) => {
   }
 
   useEffect(async () => {
-
-    // TODO 下記から既存コード
-    //if(currentVideoRef === null) return;
     let mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
 
-    // MDNから audioとカメラの使用許可をブラウザに与える
+    // MDNから audioとカメラの使用許可をブラウザに 与える
     if(videoRef.current) {
       videoRef.current.srcObject = mediaStream;
 
-        // TODO body-pit TEST
+      // body-pit 
       async function loadModel() {
         const net = await bodyPix.load(/** optional arguments, see below **/);
         bodyPixNet = net;
@@ -93,7 +92,7 @@ const Video = ({setMyVideoStream}) => {
 
   return(
     <>
-      <video autoPlay muted={true} ref={videoRef} width="640px" height="480px"/>
+      <video muted={true} ref={videoRef} width="640px" height="480px" id="local_video" hidden/>
       <canvas ref={canvasRef} id="canvas" width="640px" height="480px" />
     </>
   );
