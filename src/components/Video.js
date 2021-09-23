@@ -36,7 +36,8 @@ const Video = ({setMyVideoStream}) => {
   const drawCanvas = (srcElement) => {
     const opacity = 1.0;
     const flipHorizontal = false;
-    const maskBlurAmount = 2; // マスクの周囲にボケ効果を入れる
+    // 下記、0じゃないとsafariでprivacy部分が透明になってしまう(body-pixのバグ？)
+    const maskBlurAmount = 0; // マスクの周囲にボケ効果を入れる
 
     bodyPix.drawMask(
       canvasRef.current, srcElement, bodyPixMaks, opacity, maskBlurAmount,
