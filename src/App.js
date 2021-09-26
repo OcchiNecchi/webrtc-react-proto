@@ -26,7 +26,7 @@ const App = () => {
     <>
       <InputRoomName peerManage={peerManage} roomName={roomName} setRoomName={setRoomName} />
       <InputUserName peerManage={peerManage} roomName={roomName} userName={userName} setUserName={setUserName} />
-      <Video setMyVideoStream={setMyVideoStream} />
+      <Video setMyVideoStream={setMyVideoStream} roomName={roomName} userName={userName} />
       <VideoRemote peerManage={peerManage} />
       <VideoRemoteTwo peerManage={peerManage} />
       <VideoRemoteThree peerManage={peerManage} />

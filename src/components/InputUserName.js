@@ -55,6 +55,10 @@ export default function InputUserName({peerManage, roomName, userName, setUserNa
     e.preventDefault();
   }, [name])
 
+  const setInputUserName = () => {
+    setUserName(name);
+  }
+
   if(roomName === '' || userName !== '') return <></>;
 
   return (
@@ -81,8 +85,7 @@ export default function InputUserName({peerManage, roomName, userName, setUserNa
             onKeyDown={ async (e) => {
               if(e.target.value === '') return;
               if(e.key === 'Enter') {
-                setUserName(e.target.value);
-                setName(e.target.value);
+                setInputUserName();
                 await startListenSignal(e);
               }
             }}
@@ -95,8 +98,7 @@ export default function InputUserName({peerManage, roomName, userName, setUserNa
             className={classes.submit}
             onChange={(e) => setName(e.target.value)}
             onClick={ async(e) => {
-              setUserName(e.target.value);
-              setName(e.target.value);
+              setInputUserName();
               await startListenSignal(e);
             }}
           >
