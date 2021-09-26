@@ -1,8 +1,26 @@
 import React, {useEffect, useRef, useCallback, useReducer} from 'react';
 import "@tensorflow/tfjs";
 import * as bodyPix from "@tensorflow-models/body-pix";
+import { makeStyles } from '@material-ui/core/styles';
+import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
+import Typography from '@material-ui/core/Typography';
+import { spacing } from '@material-ui/system';
+import { ImportantDevices } from '@material-ui/icons';
 
-const Video = ({setMyVideoStream}) => {
+const useStyles = makeStyles({
+  root: {
+    minWidth: 640,
+    maxWidth: 640,
+  },
+});
+const theme = {
+  spacing: 8,
+}
+
+const Video = ({setMyVideoStream, roomName, userName}) => {
+  const classes = useStyles();
+
   // TODO リファクタ対象
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -71,12 +89,12 @@ const Video = ({setMyVideoStream}) => {
   }
 
   useEffect(async () => {
+    console.log(roomName)
     let mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
 
     // MDNから audioとカメラの使用許可をブラウザに 与える
     if(videoRef.current) {
       videoRef.current.srcObject = mediaStream;
-
       // body-pit 
       async function loadModel() {
         const net = await bodyPix.load(/** optional arguments, see below **/);
@@ -89,12 +107,23 @@ const Video = ({setMyVideoStream}) => {
         startCanvasVideo();
       }
     }
-  }, [videoRef]);
+  }, [roomName]);
 
   return(
     <>
       <video muted={true} ref={videoRef} width="640px" height="480px" id="local_video" hidden/>
-      <canvas ref={canvasRef} id="canvas" width="640px" height="480px" />
+      <Card className={classes.root} >
+        <CardContent>
+          <canvas ref={canvasRef} id="canvas" width="640px" height="480px" />
+          <Typography className={classes.title} color="textSecondary" gutterBottom>
+            My video
+          </Typography>
+          <Typography variant="body2" component="p">
+            {userName}
+          </Typography>
+        </CardContent>
+      </Card>
+      
     </>
   );
 };

@@ -47,6 +47,13 @@ const useStyles = makeStyles((theme) => ({
 export default function InputRoomName({peerManage, roomName, setRoomName}) {
   const classes = useStyles();
 
+  const [name, setName] = useState('');
+
+  const setRoomNames = () => {
+    setRoomName(name);
+    peerManage.setRoomName(name);
+  }
+
   if(roomName !== '') return <></>;
 
   return (
@@ -69,11 +76,11 @@ export default function InputRoomName({peerManage, roomName, setRoomName}) {
             label="roomname"
             type="text"
             id="roomname"
+            onChange={(e) =>  setName(e.target.value)}
             onKeyDown={ e => {
               if(e.target.value === '') return;
               if(e.key === 'Enter') {
-                setRoomName(e.target.value);
-                peerManage.setRoomName(e.target.value);
+                setRoomNames();
               }
             }}
           />
@@ -84,8 +91,7 @@ export default function InputRoomName({peerManage, roomName, setRoomName}) {
             color="primary"
             className={classes.submit}
             onClick={ e => {
-            　setRoomName(e.target.value)
-              peerManage.setRoomName(e.target.value);
+              setRoomNames();
             }}
           >
             Sign In
