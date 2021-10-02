@@ -1,12 +1,10 @@
-import React, {useEffect, useRef, useCallback, useReducer} from 'react';
+import React, {useEffect, useRef} from 'react';
 import "@tensorflow/tfjs";
 import * as bodyPix from "@tensorflow-models/body-pix";
 import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
-import { spacing } from '@material-ui/system';
-import { ImportantDevices } from '@material-ui/icons';
 
 const useStyles = makeStyles({
   root: {
@@ -14,9 +12,6 @@ const useStyles = makeStyles({
     maxWidth: 640,
   },
 });
-const theme = {
-  spacing: 8,
-}
 
 const Video = ({setMyVideoStream, roomName, userName}) => {
   const classes = useStyles();
@@ -25,11 +20,9 @@ const Video = ({setMyVideoStream, roomName, userName}) => {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   let contineuAnimation = true;
-  let animationId = null;
   let bodyPixMaks = null;
   let canvasStream = null;
   let bodyPixNet = null;
-  let segmentTimerId = null;
   // 何ミリ秒に一度canvasを書き換えるか
   const segmeteUpdateTime = 30; // ms
 
@@ -38,7 +31,7 @@ const Video = ({setMyVideoStream, roomName, userName}) => {
     // タグに直接autoplayだとvideoが止まってしまうため
     await videoRef.current.play().catch(err => console.error('local play ERROR:', err));
 
-    animationId = window.requestAnimationFrame(updateCanvas);
+    window.requestAnimationFrame(updateCanvas);
     canvasStream = canvasRef.current.captureStream();
     setMyVideoStream(canvasStream);
     updateSegment();
@@ -47,7 +40,7 @@ const Video = ({setMyVideoStream, roomName, userName}) => {
   const updateCanvas = () => {
     drawCanvas(videoRef.current);
     if (contineuAnimation) {
-      animationId = window.requestAnimationFrame(updateCanvas);
+      window.requestAnimationFrame(updateCanvas);
     }
   }
 
@@ -83,13 +76,12 @@ const Video = ({setMyVideoStream, roomName, userName}) => {
 
       if (contineuAnimation) {
         // 次の人体セグメンテーションの実行を予約する
-        segmentTimerId = setTimeout(updateSegment, segmeteUpdateTime);
+        setTimeout(updateSegment, segmeteUpdateTime);
       }
     })
   }
 
   useEffect(async () => {
-    console.log(roomName)
     let mediaStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
 
     // MDNから audioとカメラの使用許可をブラウザに 与える
@@ -98,6 +90,7 @@ const Video = ({setMyVideoStream, roomName, userName}) => {
       // body-pit 
       async function loadModel() {
         const net = await bodyPix.load(/** optional arguments, see below **/);
+        // console.log(net);
         bodyPixNet = net;
       }
       await loadModel();
