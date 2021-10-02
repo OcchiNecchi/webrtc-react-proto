@@ -10,6 +10,7 @@ const useStyles = makeStyles({
   root: {
     minWidth: 640,
     maxWidth: 640,
+    padding: 0,
   },
 });
 
@@ -106,8 +107,10 @@ const Video = ({setMyVideoStream, roomName, userName}) => {
     <>
       <video muted={true} ref={videoRef} width="640px" height="480px" id="local_video" hidden/>
       <Card className={classes.root} >
-        <CardContent>
+        <CardContent className={classes.root} >
           <canvas ref={canvasRef} id="canvas" width="640px" height="480px" />
+        </CardContent>
+        <CardContent >
           <Typography className={classes.title} color="textSecondary" gutterBottom>
             My video
           </Typography>
@@ -116,7 +119,6 @@ const Video = ({setMyVideoStream, roomName, userName}) => {
           </Typography>
         </CardContent>
       </Card>
-      
     </>
   );
 };
